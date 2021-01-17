@@ -242,7 +242,7 @@ class torch_dataset(Dataset):
                 label = np.zeros(num_classes)                #creation of zeros array with 1 in species id index 
                 label[species_id] = 1
 
-                '''
+                
                 # Adding of all labels to the current frame, works only with central coppping of sound (not random)
 
                 sampling_rate = 48000
@@ -276,11 +276,8 @@ class torch_dataset(Dataset):
                 for index, row in subset.iterrows():
                     if subset['species_id'].iloc[index] != species_id: #pokud se nejedna o aktualni species_id
                         if ((is_in(subset['t_max'].iloc[index], t_min_image, t_max_image)) or (is_in(subset['t_min'].iloc[index], t_min_image, t_max_image))): #pokud je tmax nebo tmin uvnitr aktualniho okna
-                            print(f'to recording id {recording_id} adding label')
-                            print({subset['species_id'].iloc[index]})
                             label[subset['species_id'].iloc[index]] = 1
-                            print(label)
-                '''
+                
 
                 self.label_array.append(label)  
 
@@ -307,7 +304,14 @@ class torch_dataset(Dataset):
 
 
                     #horizontal flip
-                    image = gaussian(image_orig, sigma=random.randint(0, 5))
+                    #image = gaussian(image_orig, sigma=random.randint(0, 5))
+                    #image = np.stack((image, image, image))
+                    #self.spectograms.append(image)
+                    #self.label_array.append(label)
+
+                    #random image shift
+                    shift = np.random.randint(400) 
+                    image = np.roll(image_orig, shift, axis = 1)
                     image = np.stack((image, image, image))
                     self.spectograms.append(image)
                     self.label_array.append(label)
